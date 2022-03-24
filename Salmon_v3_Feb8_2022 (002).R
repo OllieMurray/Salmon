@@ -17,7 +17,7 @@ library(gridExtra)
 library(grid)
 
 file.dir <- here(
-    "McKenzie_LHModel","outputs")
+    "River_LHModel","outputs")
 
 #SET DEFAULT GRAPHICAL PARAMETERS
 default.par <- par(no.readonly=TRUE)
@@ -78,20 +78,20 @@ plot_output <- function(out,minlim=0,maxlim=1,xlabtext="") {
 }
 
 
-#alt <- "NAA"
-#alt <- "Alt1"
-#alt <- "Alt2a"
-#alt <- "Alt2b"
-#alt <- "Alt3a"
-#alt <- "Alt3b"
-#alt <- "Alt4"
+#opt <- "NAA"
+#opt <- "Opt1"
+#opt <- "Opt2a"
+#opt <- "Opt2b"
+#opt <- "Opt3a"
+#opt <- "Opt3b"
+#opt <- "Opt4"
 
 
-run_lcm <- function(alt, case, n.sim){
+run_lcm <- function(opt, case, n.sim){
 #case <- "base-tmp"
 # Old save procedure, no longer useful if using the `get_perf_metrics` f'n
-  # save.dir <- paste0(here("McKenzie_LHModel",
-  #     "outputs", "Chinook_McKenzie_"), case)
+  # save.dir <- paste0(here("River_LHModel",
+  #     "outputs", "Chinook_River_"), case)
   # if(!dir.exists(save.dir)){
   #   dir.create(save.dir)
   # }
@@ -110,16 +110,16 @@ run_lcm <- function(alt, case, n.sim){
 
   #set.seed(666)
 
-  all_FBW <- read.csv(here("McKenzie_LHModel",
+  all_FBW <- read.csv(here("River_LHModel",
     "data", "fbw", "Feb7_2022_cgr_dam_fbw_annualsummaries.csv")) %>%
     # Mutate creates new columns, renaming "No action" to "NAA"
-    mutate(alt_fbw = case_when(
-        alt == "No action" ~ "NAA",
-        TRUE ~ alt 
+    mutate(opt_fbw = case_when(
+        opt == "No action" ~ "NAA",
+        TRUE ~ opt 
     )) %>%
-    # Remove the column called "alt" so that it does not match global alt
+    # Remove the column called "opt" so that it does not match global opt
     #   in the function call
-    select(-alt) %>%
+    select(-opt) %>%
     rename(x.Year = year)
   all_FBW <- all_FBW %>%
     filter(
@@ -127,9 +127,9 @@ run_lcm <- function(alt, case, n.sim){
         x.Year >= 1947
     ) %>%
     filter(
-        alt_fbw == alt
+        opt_fbw == opt
     )
-        # Filter to be only the alt in question
+        # Filter to be only the opt in question
   # Create stage-specific subsets
   CGR_Fry <- all_FBW %>% filter(stage == "Fry")
   CGR_SubYr <- all_FBW %>% filter(stage == "Subs")
@@ -138,7 +138,7 @@ run_lcm <- function(alt, case, n.sim){
   CGR_rec <- nrow(CGR_SubYr)
   #Above dam stream 7DADM temperature data 1936-2019 (for PSM bootstrap)
   AboveCGR <- read.csv(here(
-      "McKenzie_LHModel",
+      "River_LHModel",
       "data", "AboveCougar_USGS14159200_TempFlowData.csv"
   ))
   # AboveCGR$WYT <- factor(AboveCGR$WYT) # read.csv("C:/Users/tporteus/Documents/flow.csv")
@@ -168,30 +168,30 @@ run_lcm <- function(alt, case, n.sim){
   #Downstream temperature data (for downstream growth)
   #USGS temperature data (2011=abundant, 2015=deficit, 2016=adequate WYT)
     ds_month_temp <- read.csv(
-      here("McKenzie_LHModel","data", "Mckenzie_DownstreamDam_MeanTemperature.csv")
+      here("River_LHModel","data", "River_DownstreamDam_MeanTemperature.csv")
   )
 
-#   ds_month_temp <- read.csv("C:/Users/tporteus/Documents/.csv",header=TRUE)
-  if(alt=="NAA"){
+#   ds_month_temp <- read.csv("X")
+  if(opt=="NAA"){
     ds_month_temp <- ds_month_temp[,c(1,2,9,16)]
     #  CGR_Fry_Pass_Date <-
   }
-  if(alt=="Alt1"){
+  if(opt=="Opt1"){
     ds_month_temp <- ds_month_temp[,c(1,3,10,17)]
   }
-  if(alt=="Alt2a"){
+  if(opt=="Opt2a"){
     ds_month_temp <- ds_month_temp[,c(1,4,11,18)]
   }
-  if(alt=="Alt2b"){
+  if(opt=="Opt2b"){
     ds_month_temp <- ds_month_temp[,c(1,5,12,19)]
   }
-  if(alt=="Alt3a"){
+  if(opt=="Opt3a"){
     ds_month_temp <- ds_month_temp[,c(1,6,13,20)]
   }
-  if(alt=="Alt3b"){
+  if(opt=="Opt3b"){
     ds_month_temp <- ds_month_temp[,c(1,7,14,21)]
   }
-  if(alt=="Alt4"){
+  if(opt=="Opt4"){
     ds_month_temp <- ds_month_temp[,-c(1,8,15,22)]
   }
   
@@ -201,8 +201,8 @@ run_lcm <- function(alt, case, n.sim){
   #each row represents RSS and SAS estimates from the joint posterior (see North_Santiam_sa_cjssas_pa_adj.R)
   #CH_CSM_2013_CGRTR results were used (hatchery release)
   CJS_posterior <- read.csv(
-      here("McKenzie_LHModel","data", "cjs_posteriors", 
-        "Feb7_2022_McKenzie_sa_cjssas_pa_adj_inclrss.csv")
+      here("River_LHModel","data", "cjs_posteriors", 
+        "Feb7_2022_River_sa_cjssas_pa_adj_inclrss.csv")
   )
   CJS_iter <- nrow(CJS_posterior) #number of iterations in saved joint posterior to sample from
   
@@ -211,7 +211,7 @@ run_lcm <- function(alt, case, n.sim){
   
   ###!!!### DEVIATE INPUTS REQUIRED HERE
   ###!!!### The file name can be the same, just needs information in sheets _devs
-  deviate_file <- here("McKenzie_LHModel","data",#  "nsantiam_eg", 
+  deviate_file <- here("River_LHModel","data",#  "nsantiam_eg", 
     "survival_devs_mcK_Feb102022.xlsx")
     # From file: 
 
@@ -282,7 +282,7 @@ run_lcm <- function(alt, case, n.sim){
   
   ### RUN SIMULATION MODEL ###
   
-  cat(paste0("Running ",alt," simulation (n=",n.sim,")\n"))
+  cat(paste0("Running ",opt," simulation (n=",n.sim,")\n"))
   
   ### define simulation storage vectors/lists
   NO4_NO0 <- vector("numeric",length=n.sim) #performance metric
@@ -560,7 +560,7 @@ run_lcm <- function(alt, case, n.sim){
       sa_0plus_3_in <- sa_0plus_3_out #ocean-river survival
       sa_1plus_3_out <- rep(sa_1plus_3_c,vec_len)
       sa_1plus_3_in <- sa_1plus_3_out
-      # Same in McKenzie and Santiam:
+      # Same in River and Santiam:
       sa_3_4 <- 0.3969
       sa_4_5 <- 0.5000
       sa_5_6 <- 0.6300
@@ -615,7 +615,7 @@ run_lcm <- function(alt, case, n.sim){
     
     NO_rtn_cgr[1] <- Ninit_cgr
     NO_HO_cgr[1] <- min(max(NO_rtn_cgr[1],HO_n),cap)
-    # if(alt=="NAA"){
+    # if(opt=="NAA"){
     #   NO_outp[1] <- 0
     # }else{
     # If NO_rtn_cgr <= HO_n, if returns in year y are less than or equal to 
@@ -806,7 +806,7 @@ run_lcm <- function(alt, case, n.sim){
       NO_rtn_cgr[y] <- NO_rtn_wff[y]*(1-psm_e[y])
       
       NO_HO_cgr[y] <- min(max(NO_rtn_cgr[y],HO_n),cap)
-      #if(alt=="NAA"){
+      #if(opt=="NAA"){
       #  NO_outp[y] <- 0
       #}else{
         NO_outp[y] <- ifelse(NO_rtn_cgr[y]<=HO_n,NO_rtn_cgr[y],NO_HO_cgr[y])
@@ -969,18 +969,18 @@ run_lcm <- function(alt, case, n.sim){
 }
 
 #case <- "base-tmp"
-#alt <- "NAA"
+#opt <- "NAA"
 #run_lcm("NAA","base-tmp")
 #break
 
 # MD Note for future: change file.dir to here() type commands?
-get_perf_metrics <- function(alt,case,n.sim){
+get_perf_metrics <- function(opt,case,n.sim){
 
-  dat <<- run_lcm(alt,case,n.sim)
+  dat <<- run_lcm(opt,case,n.sim)
   ### control section
   ### Save directory - include more directory structure
-  head.dir <- paste0(file.dir,"/McKenzie_deviates_Feb11")
-  save.dir <- paste0(file.dir,"/McKenzie_deviates_Feb11/",case)
+  head.dir <- paste0(file.dir,"/River_deviates_Feb11")
+  save.dir <- paste0(file.dir,"/River_deviates_Feb11/",case)
   # Added this to also create "head.dir"
   if(!dir.exists(head.dir)){
     dir.create(head.dir)
@@ -988,21 +988,21 @@ get_perf_metrics <- function(alt,case,n.sim){
   if(!dir.exists(save.dir)){
     dir.create(save.dir)
   }
-  alt_save.dir <- paste0(file.dir,"/McKenzie_deviates_Feb11/",case, "/", alt)
-  # Save any global data in save.dir, alt-specific data in alt folder
-  if(!dir.exists(alt_save.dir)){
-    dir.create(alt_save.dir)
+  opt_save.dir <- paste0(file.dir,"/River_deviates_Feb11/",case, "/", opt)
+  # Save any global data in save.dir, opt-specific data in opt folder
+  if(!dir.exists(opt_save.dir)){
+    dir.create(opt_save.dir)
   }
-  setwd(alt_save.dir)
+  setwd(opt_save.dir)
   NO4_NO0_stats <- get_summary_stats(dat$NO4_NO0)
   
   tmp_breaks <- seq(0,max(dat$NO4_NO0)+1,length.out=40)
   png(
       paste0(
-          "CH_MCK_",alt,"_NO4_NO0_pdf_",case,"_",Sys.Date(),".png"), height=12, width=16, units="cm", res=300, pointsize=10) # antialias="cleartype")
+          "CH_MCK_",opt,"_NO4_NO0_pdf_",case,"_",Sys.Date(),".png"), height=12, width=16, units="cm", res=300, pointsize=10) # antialias="cleartype")
   tmp1 <- hist(dat$NO4_NO0,freq=FALSE,breaks=tmp_breaks,
     xlim=c(0,quantile(dat$NO4_NO0,probs=1)), #0.999)),
-               xlab="NO spawners generation 4 / generation 0",main=alt)
+               xlab="NO spawners generation 4 / generation 0",main=opt)
   tmp <- as.numeric(round(get_summary_stats(dat$NO4_NO0),3))
   isummary <- paste0("mean=",tmp[1]," sd=",tmp[2]," cv=",tmp[3],"\n",
                      " 2.5%=",tmp[4]," median=",tmp[5], " 97.5%=", tmp[6])
@@ -1023,20 +1023,20 @@ get_perf_metrics <- function(alt,case,n.sim){
   NOR_obs_l95 <- quantile(NOR_obs,probs=0.025)
   NOR_obs_u95 <- quantile(NOR_obs,probs=0.975)
   
-  png(paste0("CH_MCK_",alt,"_NO_returns_ts_",case,"_",Sys.Date(),".png"), height=12, width=16, units="cm", res=300, pointsize=10) # antialias="cleartype")
-  plot(NO_rtn_median,type="l",lwd=2,xaxt="n",ylim=c(0,max(NO_rtn_u95)),xlab="Year",ylab="NOR returns",main=alt)
+  png(paste0("CH_MCK_",opt,"_NO_returns_ts_",case,"_",Sys.Date(),".png"), height=12, width=16, units="cm", res=300, pointsize=10) # antialias="cleartype")
+  plot(NO_rtn_median,type="l",lwd=2,xaxt="n",ylim=c(0,max(NO_rtn_u95)),xlab="Year",ylab="NOR returns",main=opt)
   lines(NO_rtn_l95,lty=2)
   lines(NO_rtn_u95,lty=2)
-  if(alt=="NAA") lines(rep(NOR_obs_mean,length(NO_rtn_median)),lty=1,col="red")
-  if(alt=="NAA") lines(rep(NOR_obs_l95,length(NO_rtn_median)),lty=2,col="red")
-  if(alt=="NAA") lines(rep(NOR_obs_u95,length(NO_rtn_median)),lty=2,col="red")
-  if(alt=="NAA") legend("topleft",c("observed","model"),lty=1,col=c("red","black"),bty="n")
+  if(opt=="NAA") lines(rep(NOR_obs_mean,length(NO_rtn_median)),lty=1,col="red")
+  if(opt=="NAA") lines(rep(NOR_obs_l95,length(NO_rtn_median)),lty=2,col="red")
+  if(opt=="NAA") lines(rep(NOR_obs_u95,length(NO_rtn_median)),lty=2,col="red")
+  if(opt=="NAA") legend("topleft",c("observed","model"),lty=1,col=c("red","black"),bty="n")
   axis(1,at=c(0,5,10,15,20,25,30),labels=c(0,5,10,15,20,25,30))
   dev.off()
   # 
   
   #parameter distributions
-  png(paste0("CH_MCK_",alt,"_Pars1_",case,"_",Sys.Date(),".png"), height=16, width=16, units="cm", res=300, pointsize=10) # antialias="cleartype")
+  png(paste0("CH_MCK_",opt,"_Pars1_",case,"_",Sys.Date(),".png"), height=16, width=16, units="cm", res=300, pointsize=10) # antialias="cleartype")
   par(mfrow=c(4,2),mai=c(0.5,0.3,0.4,0.05))
   plot_output(dat$psm_o_all,minlim = 0, maxlim = 1, xlabtext = "PSM (above CGR)")
   plot_output(dat$psm_e_all,minlim = 0, maxlim = 1, xlabtext = "PSM (below CGR)")
@@ -1048,7 +1048,7 @@ get_perf_metrics <- function(alt,case,n.sim){
   par(default.par)
   dev.off()
   
-  png(paste0("CH_MCK_",alt,"_Pars2_",case,"_",Sys.Date(),".png"), height=16, width=16, units="cm", res=300, pointsize=10) # antialias="cleartype")
+  png(paste0("CH_MCK_",opt,"_Pars2_",case,"_",Sys.Date(),".png"), height=16, width=16, units="cm", res=300, pointsize=10) # antialias="cleartype")
   par(mfrow=c(4,2),mai=c(0.5,0.3,0.4,0.05))
   plot_output(dat$rss_f_all,minlim = 0, maxlim = 1, xlabtext = "CGR-SUJ survival (fry)")
   plot_output(dat$rss_sr_all,minlim = 0, maxlim = 1, xlabtext = "CGR-SUJ survival (subyrlg-res)")
@@ -1089,7 +1089,7 @@ get_perf_metrics <- function(alt,case,n.sim){
   
    
   #Proportion life history diversity of smolts and adults returning to spawn
-  png(paste0("CH_MCK_",alt,"_lhdiv6_",case,"_",Sys.Date(),".png"), height=16, width=16, units="cm", res=300, pointsize=10) # antialias="cleartype")
+  png(paste0("CH_MCK_",opt,"_lhdiv6_",case,"_",Sys.Date(),".png"), height=16, width=16, units="cm", res=300, pointsize=10) # antialias="cleartype")
   par(mfcol=c(2,1),mai=c(0.4,0.65,0.1,0.05))
   boxplot(lhs_div_6_prop,outline=FALSE,ylim=c(0,1),ylab="Proportion of smolts at SUJ (yr 26-30)")
   boxplot(lhr_div_6_prop,outline=FALSE,ylim=c(0,1),ylab="Proportion of adult returns to WFF (yr 26-30)")
@@ -1115,7 +1115,7 @@ get_perf_metrics <- function(alt,case,n.sim){
   colnames(lh_SAR_stats) <- names(lh_SAR)
   
   
-  png(paste0("CH_MCK_",alt,"_lh_SAR_",case,"_",Sys.Date(),".png"), height=16, width=16, units="cm", res=300, pointsize=10) # antialias="cleartype")
+  png(paste0("CH_MCK_",opt,"_lh_SAR_",case,"_",Sys.Date(),".png"), height=16, width=16, units="cm", res=300, pointsize=10) # antialias="cleartype")
   boxplot(lh_SAR,outline=FALSE,ylab="SAR (mean of yr 26-30)")
   par(default.par)
   dev.off()
@@ -1125,9 +1125,9 @@ get_perf_metrics <- function(alt,case,n.sim){
   pHOS_stats <- get_summary_stats(pHOS_mean)
   
   tmp_breaks <- seq(0,1,0.05)
-  png(paste0("CH_MCK_",alt,"_pHOS_mean_",case,"_",Sys.Date(),".png"), height=12, width=16, units="cm", res=300, pointsize=10) # antialias="cleartype")
+  png(paste0("CH_MCK_",opt,"_pHOS_mean_",case,"_",Sys.Date(),".png"), height=12, width=16, units="cm", res=300, pointsize=10) # antialias="cleartype")
   hist(pHOS_mean,freq=FALSE,breaks=tmp_breaks,xlim=c(0,1),
-       xlab="pHOS (mean of yr 26-30)",main=alt)
+       xlab="pHOS (mean of yr 26-30)",main=opt)
   tmp <- as.numeric(round(pHOS_stats,3))
   isummary <- paste0("mean=",tmp[1]," sd=",tmp[2]," cv=",tmp[3],"\n",
                      " 2.5%=",tmp[4]," median=",tmp[5], " 97.5%=", tmp[6])
@@ -1141,8 +1141,8 @@ get_perf_metrics <- function(alt,case,n.sim){
   pHOS_l95 <- sapply(1:ncol(pHOS_dat),function(i) quantile(pHOS_dat[,i],probs=0.025))
   pHOS_u95 <- sapply(1:ncol(pHOS_dat),function(i) quantile(pHOS_dat[,i],probs=0.975))
   
-  png(paste0("CH_MCK_",alt,"_pHOS_ts_",case,"_",Sys.Date(),".png"), height=12, width=16, units="cm", res=300, pointsize=10) # antialias="cleartype")
-  plot(pHOS_median,type="l",lwd=2,xaxt="n",ylim=c(0,1),xlab="Year",ylab="pHOS",main=alt)
+  png(paste0("CH_MCK_",opt,"_pHOS_ts_",case,"_",Sys.Date(),".png"), height=12, width=16, units="cm", res=300, pointsize=10) # antialias="cleartype")
+  plot(pHOS_median,type="l",lwd=2,xaxt="n",ylim=c(0,1),xlab="Year",ylab="pHOS",main=opt)
   axis(1,at=c(0,5,10,15,20,25,30),labels=c(0,5,10,15,20,25,30))
   lines(pHOS_l95,lty=2)
   lines(pHOS_u95,lty=2)
@@ -1159,9 +1159,9 @@ get_perf_metrics <- function(alt,case,n.sim){
   r_per_s_geomean_stats <- get_summary_stats(r_per_s_geomean)
   
   tmp_breaks <- seq(0,max(r_per_s_geomean)+0.1,0.1)
-  png(paste0("CH_MCK_",alt,"_mean_R-S_",case,"_",Sys.Date(),".png"), height=12, width=16, units="cm", res=300, pointsize=10) # antialias="cleartype")
+  png(paste0("CH_MCK_",opt,"_mean_R-S_",case,"_",Sys.Date(),".png"), height=12, width=16, units="cm", res=300, pointsize=10) # antialias="cleartype")
   hist(r_per_s_geomean,freq=FALSE,breaks=tmp_breaks,xlim=c(0,quantile(r_per_s_geomean,probs=1)), #0.99)),
-       xlab="R/S (geometric mean of yr 1-5)",main=alt)
+       xlab="R/S (geometric mean of yr 1-5)",main=opt)
   tmp <- as.numeric(round(r_per_s_geomean_stats,3))
   isummary <- paste0("mean=",tmp[1]," sd=",tmp[2]," cv=",tmp[3],"\n",
                      " 2.5%=",tmp[4]," median=",tmp[5], " 97.5%=", tmp[6])
@@ -1180,9 +1180,9 @@ get_perf_metrics <- function(alt,case,n.sim){
   SAR_mean_stats <- get_summary_stats(SAR_mean)
   
   tmp_breaks <- seq(0,max(SAR_mean)+0.01,0.01)
-  png(paste0("CH_MCK_",alt,"_mean_SAR_",case,"_",Sys.Date(),".png"), height=12, width=16, units="cm", res=300, pointsize=10) # antialias="cleartype")
+  png(paste0("CH_MCK_",opt,"_mean_SAR_",case,"_",Sys.Date(),".png"), height=12, width=16, units="cm", res=300, pointsize=10) # antialias="cleartype")
   hist(SAR_mean,freq=FALSE,breaks=tmp_breaks,xlim=c(0,quantile(SAR_mean,probs=1)), #0.99)),
-       xlab="SAR (mean of yr 1-5)",main=alt)
+       xlab="SAR (mean of yr 1-5)",main=opt)
   tmp <- as.numeric(round(SAR_mean_stats,3))
   isummary <- paste0("mean=",tmp[1]," sd=",tmp[2]," cv=",tmp[3],"\n",
                      " 2.5%=",tmp[4]," median=",tmp[5], " 97.5%=", tmp[6])
@@ -1199,7 +1199,7 @@ get_perf_metrics <- function(alt,case,n.sim){
   lh_f2s_stats <- sapply(1:6, function(i) get_summary_stats(lh_f2s[,i]))
   colnames(lh_f2s_stats) <- names(lh_f2s)
   
-  png(paste0("CH_MCK_",alt,"_lh_fry-smolt_",case,"_",Sys.Date(),".png"), height=16, width=16, units="cm", res=300, pointsize=10) # antialias="cleartype")
+  png(paste0("CH_MCK_",opt,"_lh_fry-smolt_",case,"_",Sys.Date(),".png"), height=16, width=16, units="cm", res=300, pointsize=10) # antialias="cleartype")
   boxplot(lh_f2s,outline=FALSE,ylab="Fry-smolt survival (mean of yr 1-5)")
   par(default.par)
   dev.off()
@@ -1213,8 +1213,8 @@ get_perf_metrics <- function(alt,case,n.sim){
   NO_spwn_l95 <- sapply(1:ncol(NO_spwn_dat),function(i) quantile(NO_spwn_dat[,i],probs=0.025))
   NO_spwn_u95 <- sapply(1:ncol(NO_spwn_dat),function(i) quantile(NO_spwn_dat[,i],probs=0.975))
   
-  png(paste0("CH_MCK_",alt,"_NO_spawners_ts_",case,"_",Sys.Date(),".png"), height=12, width=16, units="cm", res=300, pointsize=10) # antialias="cleartype")
-  plot(NO_spwn_median,type="l",lwd=2,xaxt="n",ylim=c(0,max(NO_spwn_u95)),xlab="Year",ylab="NOR spawners (post-PSM)",main=alt)
+  png(paste0("CH_MCK_",opt,"_NO_spawners_ts_",case,"_",Sys.Date(),".png"), height=12, width=16, units="cm", res=300, pointsize=10) # antialias="cleartype")
+  plot(NO_spwn_median,type="l",lwd=2,xaxt="n",ylim=c(0,max(NO_spwn_u95)),xlab="Year",ylab="NOR spawners (post-PSM)",main=opt)
   axis(1,at=c(0,5,10,15,20,25,30),labels=c(0,5,10,15,20,25,30))
   lines(NO_spwn_l95,lty=2)
   lines(NO_spwn_u95,lty=2)
@@ -1226,9 +1226,9 @@ get_perf_metrics <- function(alt,case,n.sim){
   NO_spwn_geomean_stats <- get_summary_stats(NO_spwn_geomean)
   NO_spwn_geomean_overall <- geoMean(NO_spwn_geomean)
   
-  png(paste0("CH_MCK_",alt,"_geomean_NOR_spawners_",case,"_",Sys.Date(),".png"), height=12, width=16, units="cm", res=300, pointsize=10) # antialias="cleartype")
+  png(paste0("CH_MCK_",opt,"_geomean_NOR_spawners_",case,"_",Sys.Date(),".png"), height=12, width=16, units="cm", res=300, pointsize=10) # antialias="cleartype")
   hist(NO_spwn_geomean,freq=FALSE,breaks=20,xlim=c(0,quantile(NO_spwn_geomean,probs=1)), #0.999)),
-       xlab="NOR spawners (post-PSM, geometric mean of yr 16-30)",main=alt)
+       xlab="NOR spawners (post-PSM, geometric mean of yr 16-30)",main=opt)
   tmp <- as.numeric(round(NO_spwn_geomean_stats,3))
   isummary <- paste0("mean=",tmp[1]," sd=",tmp[2]," cv=",tmp[3],"\n",
                      " 2.5%=",tmp[4]," median=",tmp[5], " 97.5%=", tmp[6])
@@ -1239,7 +1239,7 @@ get_perf_metrics <- function(alt,case,n.sim){
   ### EXTINCTION RISK PERFORMANCE METRICS ###
 
   ##!!!### 
-  NO_crit <- 167 # 250 #McKenzie Santiam critical abundance threshold = 250, prorated
+  NO_crit <- 167 # 250 #River Santiam critical abundance threshold = 250, prorated
   NO_spwn_4yr_mean <- vector()
   NO_spwn_below_crit <- vector()
   #tmp <- vector()
@@ -1259,8 +1259,8 @@ get_perf_metrics <- function(alt,case,n.sim){
   P_QET_01 <- factor(P_QET,levels=c(0,1))
   P_QET_01 <- table(P_QET_01)/sum(table(P_QET_01))
   
-  png(paste0("CH_MCK_",alt,"_P-QET_",case,"_",Sys.Date(),".png"), height=12, width=16, units="cm", res=300, pointsize=10) # antialias="cleartype")
-  barplot(P_QET_01,xlab="Prob < Quasi-Extinction Threshold = 167 (4-yr mean, yr 16-30)",ylab="Proportion of simulations",main=alt)
+  png(paste0("CH_MCK_",opt,"_P-QET_",case,"_",Sys.Date(),".png"), height=12, width=16, units="cm", res=300, pointsize=10) # antialias="cleartype")
+  barplot(P_QET_01,xlab="Prob < Quasi-Extinction Threshold = 167 (4-yr mean, yr 16-30)",ylab="Proportion of simulations",main=opt)
   tmp <- as.numeric(round(P_QET_stats,3))
   isummary <- paste0("mean=",tmp[1]," sd=",tmp[2]," cv=",tmp[3],"\n",
                      " 2.5%=",tmp[4]," median=",tmp[5], " 97.5%=", tmp[6])
@@ -1269,7 +1269,7 @@ get_perf_metrics <- function(alt,case,n.sim){
   
   
   ### DAM PASSAGE JUVENILE SURVIVAL PERFORMANCE METRICS ###
-  png(paste0("CH_MCK_",alt,"_DPE-DPS_CGR_",case,"_",Sys.Date(),".png"), height=12, width=16, units="cm", res=300, pointsize=10) # antialias="cleartype")
+  png(paste0("CH_MCK_",opt,"_DPE-DPS_CGR_",case,"_",Sys.Date(),".png"), height=12, width=16, units="cm", res=300, pointsize=10) # antialias="cleartype")
   par(mfcol=c(3,2),mai=c(0.5,0.3,0.4,0.05))
   plot_output(dat$DPE_F_all,minlim = 0, maxlim = 1, xlabtext = "DPE (fry)")
   plot_output(dat$DPE_S_all,minlim = 0, maxlim = 1, xlabtext = "DPE (subyearlings)")
@@ -1281,18 +1281,18 @@ get_perf_metrics <- function(alt,case,n.sim){
   dev.off()
   
   
-  NO_spwn_geomean_table <- data.frame(Life_history="All",Alternative=alt,PM="NOR (post-PSM)",t(NO_spwn_geomean_stats))
-  r_per_s_geomean_table <- data.frame(Life_history="All",Alternative=alt,PM="R/S",t(r_per_s_geomean_stats))
-  SAR_mean_table <- data.frame(Life_history="All",Alternative=alt,PM="SAR",t(SAR_mean_stats))
-  pHOS_table <- data.frame(Life_history="All",Alternative=alt,PM="pHOS",t(pHOS_stats))
-  P_QET_table <- data.frame(Life_history="All",Alternative=alt,PM="P<QET",t(P_QET_stats))
-  lhs_div_6_prop_table <- cbind(Life_history=colnames(lhs_div_6_prop_stats),Alternative=rep(alt,6),PM=rep("Prop. smolt SUJ",6),
+  NO_spwn_geomean_table <- data.frame(Life_history="All",Opternative=opt,PM="NOR (post-PSM)",t(NO_spwn_geomean_stats))
+  r_per_s_geomean_table <- data.frame(Life_history="All",Opternative=opt,PM="R/S",t(r_per_s_geomean_stats))
+  SAR_mean_table <- data.frame(Life_history="All",Opternative=opt,PM="SAR",t(SAR_mean_stats))
+  pHOS_table <- data.frame(Life_history="All",Opternative=opt,PM="pHOS",t(pHOS_stats))
+  P_QET_table <- data.frame(Life_history="All",Opternative=opt,PM="P<QET",t(P_QET_stats))
+  lhs_div_6_prop_table <- cbind(Life_history=colnames(lhs_div_6_prop_stats),Opternative=rep(opt,6),PM=rep("Prop. smolt SUJ",6),
                                 as.data.frame(t(lhs_div_6_prop_stats)))
-  lhr_div_6_prop_table <- cbind(Life_history=colnames(lhr_div_6_prop_stats),Alternative=rep(alt,6),PM=rep("Prop. adult WFF",6),
+  lhr_div_6_prop_table <- cbind(Life_history=colnames(lhr_div_6_prop_stats),Opternative=rep(opt,6),PM=rep("Prop. adult WFF",6),
                                 as.data.frame(t(lhr_div_6_prop_stats)))
-  lh_f2s_table <- cbind(Life_history=colnames(lh_f2s_stats),Alternative=rep(alt,6),PM=rep("fry-smolt survival",6),
+  lh_f2s_table <- cbind(Life_history=colnames(lh_f2s_stats),Opternative=rep(opt,6),PM=rep("fry-smolt survival",6),
                         as.data.frame(t(lh_f2s_stats)))
-  lh_SAR_table <- cbind(Life_history=colnames(lh_SAR_stats),Alternative=rep(alt,6),PM=rep("SAR",6),
+  lh_SAR_table <- cbind(Life_history=colnames(lh_SAR_stats),Opternative=rep(opt,6),PM=rep("SAR",6),
                                 as.data.frame(t(lh_SAR_stats)))
   
   pm_table <- rbind(NO_spwn_geomean_table,
@@ -1304,23 +1304,23 @@ get_perf_metrics <- function(alt,case,n.sim){
                     lhr_div_6_prop_table,
                     lh_f2s_table,
                     lh_SAR_table)
-  colnames(pm_table) <- c("Life history","Alternative","PM","Mean","SD","CV","2.5%","Median","97.5%")
+  colnames(pm_table) <- c("Life history","Opternative","PM","Mean","SD","CV","2.5%","Median","97.5%")
   
   
   ### COMBINED PLOTS AND PM TABLE###
   # These are global, so pop back to global results directory
   setwd(save.dir)
   #save into PDF
-  pdf(paste0("CH_MCK_",alt,"_combined_perf_metrics_",case,"_",Sys.Date(),".pdf"),paper="letter",width=7.5,height=10,font=NULL,pointsize=11)
+  pdf(paste0("CH_MCK_",opt,"_combined_perf_metrics_",case,"_",Sys.Date(),".pdf"),paper="letter",width=7.5,height=10,font=NULL,pointsize=11)
   par(mfrow=c(3,2),mai=c(0.7,0.7,0.4,0.1))
   #returns
-  plot(NO_rtn_median,type="l",lwd=2,xaxt="n",ylim=c(0,max(NO_rtn_u95)),xlab="Year",ylab="NOR returns to Cougar",main=alt)
+  plot(NO_rtn_median,type="l",lwd=2,xaxt="n",ylim=c(0,max(NO_rtn_u95)),xlab="Year",ylab="NOR returns to Cougar",main=opt)
   lines(NO_rtn_l95,lty=2)
   lines(NO_rtn_u95,lty=2)
-  if(alt=="NAA") lines(rep(NOR_obs_mean,length(NO_rtn_median)),lty=1,col="red")
-  if(alt=="NAA") lines(rep(NOR_obs_l95,length(NO_rtn_median)),lty=2,col="red")
-  if(alt=="NAA") lines(rep(NOR_obs_u95,length(NO_rtn_median)),lty=2,col="red")
-  if(alt=="NAA") legend("topleft",c("observed","model"),lty=1,col=c("red","black"),bty="n")
+  if(opt=="NAA") lines(rep(NOR_obs_mean,length(NO_rtn_median)),lty=1,col="red")
+  if(opt=="NAA") lines(rep(NOR_obs_l95,length(NO_rtn_median)),lty=2,col="red")
+  if(opt=="NAA") lines(rep(NOR_obs_u95,length(NO_rtn_median)),lty=2,col="red")
+  if(opt=="NAA") legend("topleft",c("observed","model"),lty=1,col=c("red","black"),bty="n")
   axis(1,at=c(0,5,10,15,20,25,30),labels=c(0,5,10,15,20,25,30))
   #spawners
   hist(NO_spwn_geomean,freq=FALSE,breaks=20,xlim=c(0,quantile(NO_spwn_geomean,probs=0.999)),
@@ -1363,7 +1363,7 @@ get_perf_metrics <- function(alt,case,n.sim){
   par(mfrow=c(3,2),mai=c(0.7,0.7,0.4,0.1))
   #life history smolts
   boxplot(lhs_div_6_prop,ylim=c(0,1),outline=FALSE,
-          ylab="Proportion of smolts at SUJ (yr 26-30)",main=paste0("Smolts by life history under ",alt),las=3)
+          ylab="Proportion of smolts at SUJ (yr 26-30)",main=paste0("Smolts by life history under ",opt),las=3)
   #life history adults
   boxplot(lhr_div_6_prop,ylim=c(0,1),outline=FALSE,
           ylab="Proportion of adult returns to WFF (yr 26-30)",main="Adult returns by life history",las=3)
@@ -1382,12 +1382,12 @@ get_perf_metrics <- function(alt,case,n.sim){
   dev.off()
   
   
-  write.csv(pm_table,paste0("CH_MCK_",alt,"_Perf_Metrics_",case,"_",Sys.Date(),".csv"),quote=FALSE,row.names=FALSE)
+  write.csv(pm_table,paste0("CH_MCK_",opt,"_Perf_Metrics_",case,"_",Sys.Date(),".csv"),quote=FALSE,row.names=FALSE)
   
   
-  sink(paste0("CH_MCK_",alt,"_Perf_Metrics_",case,"_",Sys.Date(),".txt"))
+  sink(paste0("CH_MCK_",opt,"_Perf_Metrics_",case,"_",Sys.Date(),".txt"))
   
-    cat(paste0(" dam passage evaluations: ",alt," (",prettyNum(n.sim,big.mark=",")," simulations)\n"))
+    cat(paste0(" dam passage evaluations: ",opt," (",prettyNum(n.sim,big.mark=",")," simulations)\n"))
     cat("\nNO4/NO0 stats\n")
     print(NO4_NO0_stats)
     
@@ -1421,7 +1421,7 @@ get_perf_metrics <- function(alt,case,n.sim){
   sink()
   
   
-  save.image(paste0("CH_MCK_",alt,"_",case,"_",Sys.Date(),".RData"))
+  save.image(paste0("CH_MCK_",opt,"_",case,"_",Sys.Date(),".RData"))
   
   setwd(file.dir)
 }
@@ -1429,10 +1429,10 @@ get_perf_metrics <- function(alt,case,n.sim){
 #get_perf_metrics("NAA","base-1200",10000)
 #break
 
-alts <- c("NAA","Alt1","Alt2a","Alt2b","Alt3a","Alt3b","Alt4")
+opts <- c("NAA","Opt1","Opt2a","Opt2b","Opt3a","Opt3b","Opt4")
 case <- "base"
 #case <- "base-bowerman-no-ranef"
 
-sapply(1:length(alts), function(i) get_perf_metrics(alts[i],case,10000))
+sapply(1:length(opts), function(i) get_perf_metrics(opts[i],case,10000))
 
 # After this, run the table modification script
