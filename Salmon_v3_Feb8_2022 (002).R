@@ -139,9 +139,9 @@ run_lcm <- function(opt, case, n.sim){
   #Above dam stream 7DADM temperature data 1936-2019 (for PSM bootstrap)
   AboveCGR <- read.csv(here(
       "River_LHModel",
-      "data", "AboveCougar_USGS14159200_TempFlowData.csv"
+      "data", "AboveRes_USGS14159200_TempFlowData.csv"
   ))
-  # AboveCGR$WYT <- factor(AboveCGR$WYT) # read.csv("C:/Users/tporteus/Documents/flow.csv")
+  # AboveCGR$WYT <- factor(AboveCGR$WYT) # read.csv("C:/Users/tX/Documents/flow.csv")
   AboveCGR$WYT <- factor(AboveCGR$WYT)
   
   #...either backfill missing temperatures with across-years water year type mean
@@ -351,10 +351,10 @@ run_lcm <- function(opt, case, n.sim){
     CJS_yrs <- sample(CJS_iter,vec_len,replace=FALSE)
     
     ### define data vectors
-    NO_rtn_cgr <- vector("numeric",length=vec_len) #natural origin adult returns to Cougar dam
-    NO_HO_cgr <- vector("numeric",length=vec_len) #total number of adults to be outplanted above Cougar (NOR and HOR)
-    NO_outp <- vector("numeric",length=vec_len) #natural origin outplants above Cougar
-    HO_outp <- vector("numeric",length=vec_len) #hatchery origin outplants above Cougar
+    NO_rtn_cgr <- vector("numeric",length=vec_len) #natural origin adult returns to Res dam
+    NO_HO_cgr <- vector("numeric",length=vec_len) #total number of adults to be outplanted above Res (NOR and HOR)
+    NO_outp <- vector("numeric",length=vec_len) #natural origin outplants above Res
+    HO_outp <- vector("numeric",length=vec_len) #hatchery origin outplants above Res
     NO_spwn <- vector("numeric",length=vec_len) #natural origin spawners
     HO_spwn <- vector("numeric",length=vec_len)
     pHOS <- vector("numeric",length=vec_len) # % hatchery origin spawners (for use in calculating PSM and performance metrics)
@@ -364,13 +364,13 @@ run_lcm <- function(opt, case, n.sim){
     F_hor <- vector("numeric",length=vec_len) #fry movers at head of reservoir
     S_hor <- vector("numeric",length=vec_len) #subyearling stayers at head of reservoir
     Y_hor <- vector("numeric",length=vec_len) #yearling stayers at head of reservoir
-    F_fby <- vector("numeric",length=vec_len) #fry (spring subyearlings) at Cougar forebay
+    F_fby <- vector("numeric",length=vec_len) #fry (spring subyearlings) at Res forebay
     Sr_fby <- vector("numeric",length=vec_len) #fall subyearling (reservoir over summer) at forebay
     Ss_fby <- vector("numeric",length=vec_len) #fall subyearling (natal stream over summer) at forebay
     Yrsw_fby <- vector("numeric",length=vec_len) #spring yearling (reservoir over summer/winter) at forebay
     Yrw_fby <- vector("numeric",length=vec_len) #spring yearling (reservoir over winter only) at forebay
     Ys_fby <- vector("numeric",length=vec_len) #spring yearling (natal stream over winter) at forebay
-    F_tr <- vector("numeric",length=vec_len) #fry (spring subyearling) at Cougar tailrace
+    F_tr <- vector("numeric",length=vec_len) #fry (spring subyearling) at Res tailrace
     Sr_tr <- vector("numeric",length=vec_len)
     Ss_tr <- vector("numeric",length=vec_len)
     Yrsw_tr <- vector("numeric",length=vec_len)
@@ -451,7 +451,7 @@ run_lcm <- function(opt, case, n.sim){
     ###!!!###
     ###!!!### Outplanting data needs to be updated
 
-    Ninit_cgr <- 130 # Cougar - avg. returns last 5 years
+    Ninit_cgr <- 130 # Res - avg. returns last 5 years
     # 668 #runif(1,200,500) #Initial number of NO returns to CGR in year 0 (361 value in CBP phase 2 report?)
     HO_n <- 600 #Max number of HO adults to outplant each year
     if(dtm==TRUE){
@@ -1314,7 +1314,7 @@ get_perf_metrics <- function(opt,case,n.sim){
   pdf(paste0("CH_MCK_",opt,"_combined_perf_metrics_",case,"_",Sys.Date(),".pdf"),paper="letter",width=7.5,height=10,font=NULL,pointsize=11)
   par(mfrow=c(3,2),mai=c(0.7,0.7,0.4,0.1))
   #returns
-  plot(NO_rtn_median,type="l",lwd=2,xaxt="n",ylim=c(0,max(NO_rtn_u95)),xlab="Year",ylab="NOR returns to Cougar",main=opt)
+  plot(NO_rtn_median,type="l",lwd=2,xaxt="n",ylim=c(0,max(NO_rtn_u95)),xlab="Year",ylab="NOR returns to Res",main=opt)
   lines(NO_rtn_l95,lty=2)
   lines(NO_rtn_u95,lty=2)
   if(opt=="NAA") lines(rep(NOR_obs_mean,length(NO_rtn_median)),lty=1,col="red")
