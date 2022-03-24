@@ -141,7 +141,7 @@ run_lcm <- function(alt, case, n.sim){
       "McKenzie_LHModel",
       "data", "AboveCougar_USGS14159200_TempFlowData.csv"
   ))
-  # AboveCGR$WYT <- factor(AboveCGR$WYT) # read.csv("C:/Users/tporteus/Documents/UBC Willamette/USACE flow and elevation data/AboveDetroit_USGS14178000_TempFlowData.csv")
+  # AboveCGR$WYT <- factor(AboveCGR$WYT) # read.csv("C:/Users/tporteus/Documents/flow.csv")
   AboveCGR$WYT <- factor(AboveCGR$WYT)
   
   #...either backfill missing temperatures with across-years water year type mean
@@ -168,10 +168,10 @@ run_lcm <- function(alt, case, n.sim){
   #Downstream temperature data (for downstream growth)
   #USGS temperature data (2011=abundant, 2015=deficit, 2016=adequate WYT)
     ds_month_temp <- read.csv(
-      here("McKenzie_LHModel","data", "Mckenzie_DownstreamDam_MeanTemperature_USGSforEIS.csv")
+      here("McKenzie_LHModel","data", "Mckenzie_DownstreamDam_MeanTemperature.csv")
   )
 
-#   ds_month_temp <- read.csv("C:/Users/tporteus/Documents/UBC Willamette/USACE temperature data/North_Santiam_DownstreamDam_MeanTemperature_USGSforEIS.csv",header=TRUE)
+#   ds_month_temp <- read.csv("C:/Users/tporteus/Documents/.csv",header=TRUE)
   if(alt=="NAA"){
     ds_month_temp <- ds_month_temp[,c(1,2,9,16)]
     #  CGR_Fry_Pass_Date <-
@@ -1387,7 +1387,7 @@ get_perf_metrics <- function(alt,case,n.sim){
   
   sink(paste0("CH_MCK_",alt,"_Perf_Metrics_",case,"_",Sys.Date(),".txt"))
   
-    cat(paste0("North Santiam EIS dam passage evaluations: ",alt," (",prettyNum(n.sim,big.mark=",")," simulations)\n"))
+    cat(paste0(" dam passage evaluations: ",alt," (",prettyNum(n.sim,big.mark=",")," simulations)\n"))
     cat("\nNO4/NO0 stats\n")
     print(NO4_NO0_stats)
     
