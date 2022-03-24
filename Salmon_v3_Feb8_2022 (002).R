@@ -67,7 +67,7 @@ get_summary_stats <- function(vec){
 }
 
 plot_output <- function(out,minlim=0,maxlim=1,xlabtext="") {
-  #based on Roberto Licandeo function for consistency
+  #based on function for consistency
   tmp <- get_summary_stats(out)
   hist(out, xlim=c(minlim,maxlim), xlab=xlabtext, freq=FALSE, cex.axis=1,
        breaks=20, main="", cex.lab=1.5, ylab="", las=1, col="gray70")
